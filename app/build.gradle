@@ -1,0 +1,126 @@
+import groovy.json.JsonSlurper
+
+apply plugin: 'com.android.application'
+
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.cs.demo"
+        minSdkVersion 16
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0.0"
+        resConfigs "zh"
+
+        // 设置MultiDex可用
+        multiDexEnabled true
+
+        flavorDimensions "versionCode"
+        javaCompileOptions { annotationProcessorOptions { includeCompileClasspath = true } }
+
+        manifestPlaceholders = [
+                label: "反清",
+                icon : "@drawable/yzxy"
+
+        ]
+    }
+
+
+    buildTypes {
+        release {
+            //混淆
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            //混淆
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "BASE_URL", "\"https://www.baidu.com\"" //服务器地址
+
+        }
+
+    }
+
+    productFlavors {
+
+        def json = file("${rootProject.projectDir.path}/channel_config/group${GROUP}.json").getText("UTF-8")
+//读取app目录下的channel.json文件内容
+        def flavors = new JsonSlurper().parseText(json) //转换成Jsons数组对象
+        flavors.each { flavor ->
+
+            def fileName = flavor.channel_name
+            def channelJson = file("${rootProject.projectDir.path}/channel_config/channels/${fileName}.json").getText("UTF-8")
+            def qudao = new JsonSlurper().parseText(channelJson) //转换成Jsons数组对象
+            def INDEPENDENT_URL = flavor.INDEPENDENT_URL
+            "${flavor.channel_name}" {//渠道名称，对应文件中的channel_name
+                if ("Y".equals(INDEPENDENT_URL)) {
+                    buildConfigField "String", "BASE_URL", "\"${qudao.BASE_URL}\"" //服务器地址
+                }
+
+                buildConfigField "String", "COLOR_STYLE", "\"${qudao.COLOR_STYLE}\"" //主题颜色
+                applicationId qudao.applicationId
+                buildConfigField "String", "APP_NAME", "\"${qudao.label}\"" //应用名称
+                manifestPlaceholders = [
+                        icon        : qudao.icon,//APP要显示的ICON图标，对应文件中的icon
+                        label       : qudao.label,
+                        channel_name: flavor.channel_name
+                ]
+            }
+        }
+    }
+
+    sourceSets {
+        def json = file("${rootProject.projectDir.path}/channel_config/group${GROUP}.json").getText("UTF-8")
+        //读取app目录下的channel.json文件内容
+        def flavors = new JsonSlurper().parseText(json) //转换成Jsons数组对象
+        flavors.each { flavor ->
+            def colorstyle = flavor.COLOR_STYLE
+            "${flavor.channel_name}" { //渠道资源配置
+                if (colorstyle.equals("blue")) {
+                    res.srcDirs = ["src/res-style-blue", "${rootProject.projectDir.path}/channel_config/icons/${flavor.channel_name}"]
+                    //指定资源目录
+                }
+                if (colorstyle.equals("yellow")) {
+                    res.srcDirs = ["src/res-style-yellow", "${rootProject.projectDir.path}/channel_config/icons/${flavor.channel_name}"]
+                    //指定资源目录
+                }
+            }
+        }
+    }
+
+    //修改apk名
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('release.apk')) {
+                // 输出apk名称为xxx_v1.1.1_20171005-21:23:30.apk
+                def fileName = "${variant.flavorName}_v${variant.versionName}_${releaseTime()}_release.apk"
+                outputFileName = new File(fileName)
+            }
+            if (outputFile != null && outputFile.name.endsWith('debug.apk')) {
+                // 输出apk名称为xxx_v1.1.1_20171005-21:23:30.apk
+                def fileName = "${variant.flavorName}_v${variant.versionName}_${releaseTime()}_debug.apk"
+                outputFileName = new File(fileName)
+            }
+        }
+    }
+
+
+}
+
+def releaseTime() {
+    return new Date().format("yyyyMMdd_HH_mm_ss", TimeZone.getTimeZone("GMT+8:00"))
+}
+
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <!--首页文字颜色-->
+
+    <color name="colorButonNormal">#646EFF</color>
+    <color name="colorButtonText">#FFFFFF</color>
+
+    <color name="server_agreement">#E6A037</color>
+
+    <color name="color_reset">#646EFF</color>
+</resources>

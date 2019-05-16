@@ -1,0 +1,8 @@
+{
+  "applicationId": "com.cs.demo1",
+  "label": "复明",
+  "channel_name": "jngj",
+  "icon": "@drawable/logo_login",
+  "BASE_URL": "https://www.baidu.com",
+  "INDEPENDENT_URL": "Y"
+}

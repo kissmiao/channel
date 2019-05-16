@@ -1,0 +1,8 @@
+{
+  "applicationId": "com.cs.demo2",
+  "label": "反清",
+  "channel_name": "yzxy",
+  "icon": "@drawable/logo_login",
+  "BASE_URL": "https://www.google.com.hk",
+  "INDEPENDENT_URL": "Y"
+}
