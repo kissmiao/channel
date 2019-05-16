@@ -18,7 +18,5 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, BuildConfig.APP_NAME, Toast.LENGTH_LONG).show();
             }
         });
-
-
     }
 }
