@@ -20,8 +20,8 @@ android {
         javaCompileOptions { annotationProcessorOptions { includeCompileClasspath = true } }
 
         manifestPlaceholders = [
-                label: "反清",
-                icon : "@drawable/yzxy"
+                label        : "反清",
+                icon         : "@drawable/yzxy"
 
         ]
     }
@@ -62,6 +62,7 @@ android {
                 buildConfigField "String", "COLOR_STYLE", "\"${qudao.COLOR_STYLE}\"" //主题颜色
                 applicationId qudao.applicationId
                 buildConfigField "String", "APP_NAME", "\"${qudao.label}\"" //应用名称
+
                 manifestPlaceholders = [
                         icon        : qudao.icon,//APP要显示的ICON图标，对应文件中的icon
                         label       : qudao.label,
